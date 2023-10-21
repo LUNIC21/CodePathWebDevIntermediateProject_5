@@ -33,6 +33,9 @@ Here's a walkthrough of implemented user stories:
 
 <img src='https://i.imgur.com/ChZHhGh.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
+# Gif
+![](https://github.com/LUNIC21/CodePathWebDevIntermediateProject_5/blob/main/Project_1.gif)
+
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with ScreenToGif
 <!-- Recommended tools:
