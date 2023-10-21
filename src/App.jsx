@@ -2,51 +2,69 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
 import { Client } from "@petfinder/petfinder-js";
+import AnimalInfo from './components/AnimalInfo';
+import BreedFilter from './components/BreedFilter';
 
 const ACCESS_KEY = import.meta.env.VITE_APP_ACCESS_KEY;
 const SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
 
 function App() {
-  console.log(ACCESS_KEY);
-  console.log(SECRET_KEY);
 
-  const API_LIST = "https://api.petfinder.com/v2/animals"
+  const [searchBar, setSearchBar] = useState('');
   const [animalList, setAnimalList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [animalType, setAnimalType] = useState('');
+  const [selectedBreed, setSelectedBreed] = useState(''); 
 
-  const client = new Client({ apiKey: ACCESS_KEY, secret: SECRET_KEY });
+  const handleAnimalType = (event) => {
+    setAnimalType(event.target.value);
+  }
 
-  const animalListInitialize = async () => {
-    try {
-      const response = await client.animal.search({
-        limit: 100
-      }); 
-      console.log('Animal list response:', response);
-      setAnimalList(response.data.animals); 
-    } catch (error) {
-      console.error('Error fetching animal list:', error);
-    }
+  const handleSearch = (event) => {
+    setSearchBar(event.target.value);
   };
 
+  const clearRadio = (event) =>{
+    setAnimalType('');
+    setSearchBar('');
+    setSelectedBreed('');
+  }
+  const handleBreedChange = (breed) => {
+    setSelectedBreed(breed);
+  };
 
-  useEffect(() =>{
-    animalListInitialize();
-  },[]);
-
+  
 
   return (
     <div>
-      <h1>Hello</h1>
+      <h1>Let's adopt pets!</h1>
+      <div className='filter-options'>
+        <label className='radio-labels' htmlFor='dog-radio'>Dog</label>
+        <input className='radio-buttons' type="radio" value = "dog" id="dog-radio" checked={animalType === "dog"} onChange = {handleAnimalType}></input>
+        <label className='radio-labels' htmlFor='cat-radio'>Cat</label>
+        <input className='radio-buttons' type="radio" value = "cat" id="cat-radio" checked={animalType === "cat"} onChange = {handleAnimalType}></input>
+        <button className='clear-radio' onClick={clearRadio}>Clear</button>
+        <br></br>
+        <input className='search-bar'
+        type="text"
+        placeholder="Search by name"
+        value={searchBar}
+        onChange={handleSearch}
+      />
+      <BreedFilter
+        animalType={animalType}
+        onBreedChange={handleBreedChange}
+      >
+      </BreedFilter>
+      </div>
+      
       <div className="animal-list">
-        {animalList.map((animal) => (
-          <div key={animal.id} className="animal-card">
-            <img src={animal.primary_photo_cropped?.small || 'fallback-image-url'} alt={animal.name} />
-            <h2>{animal.name}</h2>
-            <p>Species: {animal.species}</p>
-            <p>Breed: {animal.breeds.primary}</p>
-            <p>Age: {animal.age}</p>
-            <p>Size: {animal.size}</p>
-          </div>
-        ))}
+          <AnimalInfo 
+            searchBar={searchBar} 
+            page = {page}
+            animalType = {animalType}
+            breed = {selectedBreed}
+          ></AnimalInfo>
       </div>
     </div>
   )
